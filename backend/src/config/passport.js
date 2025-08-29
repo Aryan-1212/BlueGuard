@@ -30,7 +30,6 @@ passport.use(
   )
 );
 
-// ✅ Required for persistent login sessions
 passport.serializeUser((user, done) => {
   done(null, user);
 });

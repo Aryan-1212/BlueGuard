@@ -5,11 +5,9 @@ import { authMiddleware } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// Local auth
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 
-// Google OAuth
 router.get(
   "/google",
   passport.authenticate("google", { scope: ["profile", "email"] })
@@ -19,14 +17,13 @@ router.get(
   "/google/callback",
   passport.authenticate("google", { failureRedirect: "/auth/login" }),
   (req, res) => {
-    // Set a flag in session to indicate Google OAuth login
     req.session.isGoogleAuth = true;
     console.log("Google OAuth successful, user:", req.user);
-    res.redirect("http://localhost:3000/dashboard"); // frontend dashboard
+    res.redirect("http://localhost:3000/dashboard"); 
   }
 );
 
-// ✅ Logout
+
 router.post("/logout", (req, res) => {
   if (req.logout) {
     req.logout(() => {
@@ -39,7 +36,6 @@ router.post("/logout", (req, res) => {
   }
 });
 
-// ✅ Current User - handles both JWT and Google OAuth
 router.get("/me", authMiddleware, (req, res) => {
   if (req.user) {
     res.json({ user: req.user });
@@ -48,7 +44,6 @@ router.get("/me", authMiddleware, (req, res) => {
   }
 });
 
-// ✅ Check Google OAuth status
 router.get("/google/status", (req, res) => {
   console.log("Checking Google OAuth status:", {
     isAuthenticated: req.isAuthenticated(),
@@ -67,7 +62,6 @@ router.get("/google/status", (req, res) => {
   }
 });
 
-// ✅ Test route to check session
 router.get("/test-session", (req, res) => {
   res.json({
     session: req.session,
