@@ -51,7 +51,7 @@ export default function RootLayout({ children }) {
       <body>
         <header className="bg-white shadow-sm border-b">
           <nav className="max-w-5xl mx-auto flex justify-between items-center p-4">
-            <h1 className="text-xl font-bold">🚀 Hackathon Starter</h1>
+            <h1 className="text-xl font-bold">🚀 BlueGuard Starter</h1>
             <div className="flex gap-6 text-sm font-medium">
               <Link href="/home" className="hover:text-blue-600">
                 Home
@@ -86,7 +86,7 @@ export default function RootLayout({ children }) {
 
         <footer className="bg-white border-t mt-8">
           <div className="max-w-5xl mx-auto text-center py-4 text-sm text-gray-500">
-            © {new Date().getFullYear()} Hackathon Starter – All rights
+            © {new Date().getFullYear()} BlueGuard – All rights
             reserved.
           </div>
         </footer>
