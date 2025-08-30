@@ -22,8 +22,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <header className="bg-white shadow-sm border-b">
-          <nav className="max-w-7xl mx-auto flex justify-between items-center p-4">
+        <header className="bg-white shadow-sm border-b top-0 sticky z-50 mx-2 rounded-lg opacity-90">
+          <nav className="max-w-7xl mx-auto flex  justify-between items-center p-4">
             {/* Logo/Brand */}
             <div className="flex items-center">
               <h1 className="text-xl font-bold">🚀 BlueGuard</h1>
@@ -55,11 +55,6 @@ export default function RootLayout({ children }) {
             
             {/* Right side - User info and auth buttons */}
             <div className="flex items-center space-x-4">
-              {hasToken && user && (
-                <div className="text-sm text-gray-600">
-                  Welcome, {user.name || user.email}
-                </div>
-              )}
               
               {!hasToken ? (
                 <div className="flex gap-4">
