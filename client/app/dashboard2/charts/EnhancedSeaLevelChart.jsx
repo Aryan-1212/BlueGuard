@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useMemo } from 'react';
 import * as d3 from 'd3';
 
 export default function EnhancedSeaLevelChart({ 
@@ -20,7 +20,8 @@ export default function EnhancedSeaLevelChart({
     { time: '24:00', actual: null, predicted: 1.93 }
   ];
 
-  const chartData = data || defaultData;
+  // Memoize chart data to prevent unnecessary re-renders
+  const chartData = useMemo(() => data || defaultData, [data]);
 
   useEffect(() => {
     if (!svgRef.current || !chartData.length) return;

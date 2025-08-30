@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useMemo } from 'react';
 import * as d3 from 'd3';
 
 export default function EnvironmentalChart({ 
@@ -21,7 +21,8 @@ export default function EnvironmentalChart({
     { time: "24:00", wave_height: 2.1, wind_speed: 26.8, rainfall: 15.3 }
   ];
 
-  const chartData = data || defaultData;
+  // Memoize chart data to prevent unnecessary re-renders
+  const chartData = useMemo(() => data || defaultData, [data]);
 
   useEffect(() => {
     if (!svgRef.current || !chartData.length) return;

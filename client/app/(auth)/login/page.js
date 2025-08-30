@@ -61,7 +61,7 @@ export default function LoginPage() {
       
       // Small delay to ensure localStorage is set before redirect
       setTimeout(() => {
-        router.push("/dashboard");
+        router.push("/dashboard2");
       }, 100);
     }
   }, [router]);
@@ -77,7 +77,7 @@ export default function LoginPage() {
     alert(data.message || "Logged in!");
     if (data.token){
       localStorage.setItem("token", data.token);
-      window.location.href = "/dashboard";
+      window.location.href = "/dashboard2";
     } 
   };
 

@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { 
   Waves, 
   TrendingUp, 
@@ -25,10 +26,13 @@ import EnvironmentalChart from "./charts/EnvironmentalChart.jsx";
 // Dashboard data and alert structures defined inline
 
 export default function Dashboard() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [selectedTimeRange, setSelectedTimeRange] = useState('24h');
   const [selectedView, setSelectedView] = useState('combined');
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
   const [isLoadingTimeRange, setIsLoadingTimeRange] = useState(false);
+  const router = useRouter();
   
   // Sample real-time data
   const [dashboardData, setDashboardData] = useState({
@@ -209,6 +213,54 @@ export default function Dashboard() {
     setIsLoadingTimeRange(false);
   };
 
+  // Authentication check
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        
+        if (token) {
+          const response = await fetch("http://localhost:5000/api/auth/me", {
+            credentials: "include",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          
+          if (response.ok) {
+            const data = await response.json();
+            if (data.user) {
+              setUser(data.user);
+              setLoading(false);
+              return;
+            }
+          }
+        }
+        
+        const googleResponse = await fetch("http://localhost:5000/api/auth/google/status", {
+          credentials: "include",
+        });
+        
+        if (googleResponse.ok) {
+          const googleData = await googleResponse.json();
+          if (googleData.authenticated && googleData.user) {
+            setUser(googleData.user);
+            localStorage.setItem("Gtoken", "google_authenticated");
+            setLoading(false);
+            return;
+          }
+        }
+        
+        router.push("/login");
+      } catch (error) {
+        console.error("Auth check error:", error);
+        router.push("/login");
+      }
+    };
+
+    checkAuth();
+  }, [router]);
+
   // Update timestamp every second
   useEffect(() => {
     const timer = setInterval(() => {
@@ -217,7 +269,7 @@ export default function Dashboard() {
     return () => clearInterval(timer);
   }, []);
 
-  // Simulate real-time data updates
+  // Simulate real-time data updates - only update every 30 seconds to reduce re-renders
   useEffect(() => {
     const timer = setInterval(() => {
       setDashboardData(prev => ({
@@ -228,7 +280,7 @@ export default function Dashboard() {
         rainfall: 40 + Math.random() * 15,
         timestamp: new Date().toISOString()
       }));
-    }, 10000);
+    }, 30000); // Changed from 10000 to 30000 (30 seconds)
     return () => clearInterval(timer);
   }, []);
 
@@ -260,6 +312,24 @@ export default function Dashboard() {
     }
   };
 
+  if (loading) return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50 flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <p className="text-gray-600 text-lg">Loading dashboard...</p>
+      </div>
+    </div>
+  );
+  
+  if (!user) return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50 flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <p className="text-gray-600 text-lg">Redirecting to login...</p>
+      </div>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50" data-testid="dashboard-page">
       {/* Enhanced Header */}
@@ -282,6 +352,16 @@ export default function Dashboard() {
             </div>
             
             <div className="flex items-center space-x-6">
+              {/* User Welcome */}
+              {user && (
+                <div className="flex items-center space-x-2 bg-card/80 px-4 py-2 rounded-lg shadow-sm">
+                  <Users className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-medium text-foreground">
+                    Welcome, {user.name || user.email}
+                  </span>
+                </div>
+              )}
+              
               {/* Real-time Data Stream Indicator */}
               <div className="flex items-center space-x-2 bg-card/80 px-4 py-2 rounded-lg shadow-sm">
                 <div className="flex space-x-1">

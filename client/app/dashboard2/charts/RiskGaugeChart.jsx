@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useMemo } from 'react';
 import * as d3 from 'd3';
 
 export default function RiskGaugeChart({ 
@@ -9,6 +9,9 @@ export default function RiskGaugeChart({
   title = "Risk Level"
 }) {
   const svgRef = useRef(null);
+
+  // Memoize the value to prevent unnecessary re-renders
+  const memoizedValue = useMemo(() => value, [value]);
 
   useEffect(() => {
     if (!svgRef.current) return;
@@ -60,7 +63,7 @@ export default function RiskGaugeChart({
       .innerRadius(radius - 15)
       .outerRadius(radius)
       .startAngle(-Math.PI / 2)
-      .endAngle(-Math.PI / 2 + (Math.PI * value / 100));
+      .endAngle(-Math.PI / 2 + (Math.PI * memoizedValue / 100));
 
     const valueArcPath = svg.append('path')
       .attr('transform', `translate(${centerX}, ${centerY})`)
@@ -72,7 +75,7 @@ export default function RiskGaugeChart({
       .transition()
       .duration(2000)
       .attrTween('d', function() {
-        const interpolate = d3.interpolate(0, value);
+        const interpolate = d3.interpolate(0, memoizedValue);
         return function(t) {
           const currentValue = interpolate(t);
           const currentArc = d3.arc()
@@ -92,7 +95,7 @@ export default function RiskGaugeChart({
       .attr('fill', '#374151');
 
     // Needle
-    const needleAngle = -Math.PI / 2 + (Math.PI * value / 100);
+    const needleAngle = -Math.PI / 2 + (Math.PI * memoizedValue / 100);
     const needleLength = radius - 25;
     
     const needleEndX = centerX + needleLength * Math.cos(needleAngle);
@@ -126,7 +129,7 @@ export default function RiskGaugeChart({
       .transition()
       .duration(2000)
       .tween('text', function() {
-        const interpolate = d3.interpolate(0, value);
+        const interpolate = d3.interpolate(0, memoizedValue);
         return function(t) {
           d3.select(this).text(`${Math.round(interpolate(t))}%`);
         };
@@ -141,7 +144,7 @@ export default function RiskGaugeChart({
       .attr('fill', '#6b7280')
       .text(title);
 
-  }, [value, width, height, title]);
+  }, [memoizedValue, width, height, title]);
 
   return (
     <div className="gauge-container flex items-center justify-center" data-testid="risk-gauge-chart">

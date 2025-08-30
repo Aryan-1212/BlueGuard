@@ -21,7 +21,7 @@ export default function SignupPage() {
   useEffect(() => {
     setMounted(true);
     if (localStorage.getItem("token")) {
-      router.push("/dashboard");
+      router.push("/dashboard2");
     }
   }, [router]);
 
