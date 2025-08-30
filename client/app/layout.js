@@ -55,6 +55,11 @@ export default function RootLayout({ children }) {
             
             {/* Right side - User info and auth buttons */}
             <div className="flex items-center space-x-4">
+              {hasToken && user && (
+                <div className="text-sm text-gray-600">
+                  Welcome, {user.name || user.email}
+                </div>
+              )}
               
               {!hasToken ? (
                 <div className="flex gap-4">
