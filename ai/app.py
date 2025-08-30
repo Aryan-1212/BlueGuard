@@ -15,7 +15,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from model import CoastalThreatPredictor
 
 app = Flask(__name__)
-CORS(app,origins=["http://localhost:3000", "http://localhost:5000"])  # Enable CORS for all routes
+CORS(app,origins=["http://localhost:3000", "http://localhost:5000", "http://localhost:5001"])  # Enable CORS for all routes
 
 # Global predictor instance
 predictor = None
@@ -125,13 +125,24 @@ def load_crisis_data():
         excel_file = "testing_api_data.xlsx"
         if os.path.exists(excel_file):
             print(f"📊 Loading crisis data from {excel_file}...")
-            crisis_data = pd.read_excel(excel_file)
-            print(f"✅ Loaded {len(crisis_data)} rows of crisis data")
-            print(f"📋 Columns: {list(crisis_data.columns)}")
-            return True
+            try:
+                crisis_data = pd.read_excel(excel_file)
+                print(f"✅ Loaded {len(crisis_data)} rows of crisis data")
+                print(f"📋 Columns: {list(crisis_data.columns)}")
+                return True
+            except Exception as e:
+                print(f"❌ Error reading Excel file: {e}")
+                print("⚠️ Falling back to sample data...")
+                create_sample_data("sample_crisis_data.csv")
+                crisis_data = pd.read_csv("sample_crisis_data.csv")
+                print(f"✅ Loaded {len(crisis_data)} rows of sample crisis data")
+                return True
         else:
-            print(f"❌ Excel file {excel_file} not found")
-            return False
+            print(f"❌ Excel file {excel_file} not found. Creating and loading sample data...")
+            create_sample_data("sample_crisis_data.csv")
+            crisis_data = pd.read_csv("sample_crisis_data.csv")
+            print(f"✅ Loaded {len(crisis_data)} rows of sample crisis data")
+            return True
     except Exception as e:
         print(f"❌ Error loading crisis data: {e}")
         return False
@@ -291,13 +302,18 @@ def start_crisis_monitoring():
     """Start the crisis monitoring background thread"""
     global crisis_update_thread, stop_crisis_monitoring
     
-    if crisis_update_thread is None or not crisis_update_thread.is_alive():
-        stop_crisis_monitoring = False
-        crisis_update_thread = threading.Thread(target=crisis_monitoring_loop, daemon=True)
-        crisis_update_thread.start()
-        print("🚨 Crisis monitoring started")
-        return True
-    return False
+    # Always restart the monitoring thread if already running
+    global crisis_update_thread, stop_crisis_monitoring
+    if crisis_update_thread is not None and crisis_update_thread.is_alive():
+        print("🛑 Stopping existing crisis monitoring thread...")
+        stop_crisis_monitoring = True
+        crisis_update_thread.join(timeout=2)
+        print("✅ Previous crisis monitoring thread stopped.")
+    stop_crisis_monitoring = False
+    crisis_update_thread = threading.Thread(target=crisis_monitoring_loop, daemon=True)
+    crisis_update_thread.start()
+    print("🚨 Crisis monitoring started (restarted if needed)")
+    return True
 
 def stop_crisis_monitoring():
     """Stop the crisis monitoring background thread"""
@@ -542,15 +558,14 @@ def start_crisis_monitoring_endpoint():
             return jsonify({'error': 'Crisis data not loaded'}), 500
         
         success = start_crisis_monitoring()
-        
         if success:
             return jsonify({
-                'message': 'Crisis monitoring started successfully',
+                'message': 'Crisis monitoring started (restarted if needed)',
                 'timestamp': datetime.now().isoformat(),
                 'data_rows_available': len(crisis_data)
             })
         else:
-            return jsonify({'error': 'Crisis monitoring already running'}), 400
+            return jsonify({'error': 'Failed to start crisis monitoring'}), 500
             
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -573,17 +588,20 @@ def get_crisis_data_info():
     """Get information about the loaded crisis data"""
     try:
         if crisis_data is None:
+            print("❌ No crisis data loaded in /crisis-data/info endpoint")
             return jsonify({'error': 'No crisis data loaded'}), 500
-        
-        info = {
-            'timestamp': datetime.now().isoformat(),
-            'total_rows': len(crisis_data),
-            'columns': list(crisis_data.columns),
-            'data_types': crisis_data.dtypes.to_dict(),
-            'sample_data': crisis_data.head(3).to_dict('records') if len(crisis_data) > 0 else []
-        }
-        
-        return jsonify(info)
+        try:
+            info = {
+                'timestamp': datetime.now().isoformat(),
+                'total_rows': len(crisis_data),
+                'columns': list(crisis_data.columns),
+                'data_types': crisis_data.dtypes.apply(str).to_dict(),
+                'sample_data': crisis_data.head(3).to_dict('records') if len(crisis_data) > 0 else []
+            }
+            return jsonify(info)
+        except Exception as e:
+            print(f"❌ Error in /crisis-data/info endpoint: {e}")
+            return jsonify({'error': str(e)}), 500
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -830,7 +848,7 @@ if __name__ == '__main__':
         # Run the Flask app
         app.run(
             host='0.0.0.0',
-            port=5000,
+            port=5001,
             debug=True
         )
     else:
