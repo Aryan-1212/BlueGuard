@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { FiMail, FiLock } from "react-icons/fi";
+import AuthRedirect from "../../components/AuthRedirect";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -29,9 +30,39 @@ export default function LoginPage() {
     // Check if this is a redirect from Google OAuth
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('auth') === 'google') {
-      // This is a Google OAuth redirect, set the flag
+      // This is a Google OAuth redirect, set the flag and trigger auth update
       localStorage.setItem("Gtoken", "google_authenticated");
-      router.push("/dashboard");
+      
+      // Fetch real Google user data
+      const fetchGoogleUserData = async () => {
+        try {
+          const googleResponse = await fetch("http://localhost:5000/api/auth/google/status", {
+            credentials: "include"
+          });
+          
+          if (googleResponse.ok) {
+            const googleData = await googleResponse.json();
+            if (googleData.authenticated && googleData.user) {
+              // Store user data in localStorage for immediate access
+              localStorage.setItem("googleUserData", JSON.stringify(googleData.user));
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching Google user data:", error);
+        }
+      };
+      
+      fetchGoogleUserData();
+      
+      // Dispatch a custom event to notify other components about auth change
+      window.dispatchEvent(new CustomEvent('authStateChanged', {
+        detail: { type: 'google', authenticated: true }
+      }));
+      
+      // Small delay to ensure localStorage is set before redirect
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 100);
     }
   }, [router]);
   
@@ -51,7 +82,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <AuthRedirect>
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-md border border-gray-200">
         <h1 className="text-2xl font-semibold text-center text-gray-800 mb-6">
           Welcome Back 👋
@@ -90,9 +122,11 @@ export default function LoginPage() {
 
         <div className="mt-4">
           <button
-            onClick={() =>
-              (window.location.href = "http://localhost:5000/api/auth/google")
-            }
+            onClick={() => {
+              // Store a flag to indicate Google OAuth is in progress
+              sessionStorage.setItem('googleOAuthInProgress', 'true');
+              window.location.href = "http://localhost:5000/api/auth/google";
+            }}
             className="flex items-center justify-center gap-2 w-full p-3 border rounded-lg hover:bg-gray-50 transition"
           >
             <FcGoogle className="text-xl" />
@@ -106,5 +140,6 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+    </AuthRedirect>
   );
 }

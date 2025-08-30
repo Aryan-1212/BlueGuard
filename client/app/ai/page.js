@@ -1,6 +1,7 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { FiSend } from "react-icons/fi";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 export default function AIPage() {
   const [messages, setMessages] = useState([]); // [{role: "user", text: ""}, {role: "ai", text: ""}]
@@ -49,7 +50,8 @@ export default function AIPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <ProtectedRoute>
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white shadow-lg rounded-xl p-6 w-full max-w-2xl border border-gray-200 flex flex-col h-[80vh]">
         <h1 className="text-2xl font-semibold text-center text-gray-800 mb-4">
           AI Assistant 🤖
@@ -118,5 +120,6 @@ export default function AIPage() {
         )}
       </div>
     </div>
+    </ProtectedRoute>
   );
 }

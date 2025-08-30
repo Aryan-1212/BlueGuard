@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import AuthRedirect from "../../components/AuthRedirect";
 
 // ✅ dynamically import icons (prevent hydration mismatch)
 const FiMail = dynamic(() => import("react-icons/fi").then(mod => mod.FiMail), { ssr: false });
@@ -41,7 +42,8 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <AuthRedirect>
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-md border border-gray-200">
         <h1 className="text-2xl font-semibold text-center text-gray-800 mb-6">
           Create Account 🚀
@@ -105,5 +107,6 @@ export default function SignupPage() {
         </div>
       </div>
     </div>
+    </AuthRedirect>
   );
 }
