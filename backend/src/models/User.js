@@ -4,8 +4,17 @@ import bcrypt from "bcryptjs";
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
+  number: { type: String, required: true, unique: true },
   password: { type: String },
-  googleId: { type: String }, 
+  googleId: { type: String },
+  phoneVerified: { type: Boolean, default: false },
+  verificationCode: { type: String },
+  verificationCodeExpires: { type: Date },
+  smsPreferences: {
+    threatAlerts: { type: Boolean, default: true },
+    crisisUpdates: { type: Boolean, default: true },
+    welcomeMessages: { type: Boolean, default: true }
+  }
 }, { timestamps: true });
 
 userSchema.pre("save", async function (next) {

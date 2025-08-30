@@ -8,6 +8,7 @@ import { connectDB } from "./config/db.js";
 import "./config/passport.js";
 import authRoutes from "./routes/authRoutes.js";
 import aiRoutes from "./routes/aiRoutes.js";
+import threatRoutes from "./routes/threatRoutes.js";
 import  errorHandler  from "./middleware/errorHandler.js";
 import { getMe } from "./controllers/authController.js";
 
@@ -44,6 +45,7 @@ app.use(passport.session());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api", aiRoutes);
+app.use("/api/threats", threatRoutes);
 app.get("/me", getMe);
 // Error Handler
 app.use(errorHandler);

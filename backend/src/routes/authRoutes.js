@@ -1,12 +1,14 @@
 import express from "express";
 import passport from "passport";
-import { registerUser, loginUser } from "../controllers/authController.js";
+import { registerUser, loginUser, verifyPhone, resendVerificationCode } from "../controllers/authController.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
 router.post("/register", registerUser);
 router.post("/login", loginUser);
+router.post("/verify-phone", verifyPhone);
+router.post("/resend-verification", resendVerificationCode);
 
 router.get(
   "/google",

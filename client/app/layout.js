@@ -57,7 +57,7 @@ export default function RootLayout({ children }) {
             <div className="flex items-center space-x-4">
               {hasToken && user && (
                 <div className="text-sm text-gray-600">
-                  Welcome, {user.name || user.email}
+                  {/* Welcome, {user.name || user.email} */}
                 </div>
               )}
               
