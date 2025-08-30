@@ -22,6 +22,9 @@ import { GlassCard } from "./ui/glass-card";
 import EnhancedSeaLevelChart from "./charts/EnhancedSeaLevelChart.jsx";
 import RiskGaugeChart from "./charts/RiskGaugeChart.jsx";
 import EnvironmentalChart from "./charts/EnvironmentalChart.jsx";
+import CrisisMonitoringControls from "./components/CrisisMonitoringControls";
+import CrisisStatusDisplay from "./components/CrisisStatusDisplay";
+import { useCrisisMonitoring } from "./hooks/useCrisisMonitoring";
 
 // Dashboard data and alert structures defined inline
 
@@ -33,6 +36,17 @@ export default function Dashboard() {
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
   const [isLoadingTimeRange, setIsLoadingTimeRange] = useState(false);
   const router = useRouter();
+  
+  // Crisis monitoring hook
+  const {
+    crisisData,
+    isMonitoring,
+    loading: crisisLoading,
+    error: crisisError,
+    lastUpdate,
+    startMonitoring,
+    stopMonitoring
+  } = useCrisisMonitoring();
   
   // Sample real-time data
   const [dashboardData, setDashboardData] = useState({
@@ -880,6 +894,37 @@ export default function Dashboard() {
               </div>
             </CardContent>
           </Card>
+        </div>
+
+        {/* Crisis Monitoring Section */}
+        <div className="mt-8">
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-foreground mb-2">🚨 Crisis Monitoring System</h2>
+            <p className="text-muted-foreground">
+              Real-time monitoring of coastal threats using AI predictions from Excel data
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Crisis Monitoring Controls */}
+            <div className="lg:col-span-1">
+              <CrisisMonitoringControls
+                isMonitoring={isMonitoring}
+                onStart={startMonitoring}
+                onStop={stopMonitoring}
+                loading={crisisLoading}
+                error={crisisError}
+              />
+            </div>
+            
+            {/* Crisis Status Display */}
+            <div className="lg:col-span-2">
+              <CrisisStatusDisplay
+                crisisData={crisisData}
+                lastUpdate={lastUpdate}
+              />
+            </div>
+          </div>
         </div>
 
       </main>

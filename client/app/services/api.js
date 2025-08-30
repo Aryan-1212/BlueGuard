@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:5000/api", // backend URL
+  baseURL: "http://localhost:5001", // Flask server URL
 });
 
 // ===== Auth =====
@@ -17,3 +17,9 @@ export const sendContact = (data) => API.post("/contact", data);
 
 // ===== AI Chat =====
 export const askAI = (prompt) => API.post("/ai", { prompt });
+
+// ===== Crisis Monitoring =====
+export const getCrisisStatus = () => API.get("/crisis-status");
+export const getCrisisDataInfo = () => API.get("/crisis-data/info");
+export const startCrisisMonitoring = () => API.post("/crisis-monitoring/start");
+export const stopCrisisMonitoring = () => API.post("/crisis-monitoring/stop");
