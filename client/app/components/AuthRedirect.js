@@ -9,7 +9,7 @@ export default function AuthRedirect({ children }) {
 
   useEffect(() => {
     if (!loading && hasToken) {
-      router.push("/dashboard");
+      router.push("/dashboard2");
     }
   }, [hasToken, loading, router]);
 

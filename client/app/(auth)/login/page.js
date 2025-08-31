@@ -23,7 +23,7 @@ export default function LoginPage() {
         const gtoken = localStorage.getItem("Gtoken");
 
         if (token || gtoken) {
-          router.push("/dashboard");
+          router.push("/dashboard2");
         }
       }
     };

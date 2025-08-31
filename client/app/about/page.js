@@ -64,28 +64,28 @@ const AboutPage = () => {
 
   const team = [
     {
-      name: "Dr. Sarah Chen",
-      role: "Lead AI/ML Engineer",
-      expertise: "Coastal modeling, machine learning, environmental data analysis",
-      avatar: "👩‍💻"
+      name: "Krish Shah",
+      role: "Web Developer",
+      expertise: "Frontend development, React, Next.js",
+      avatar: "💻"
     },
     {
-      name: "Marcus Rodriguez",
-      role: "Systems Architect",
-      expertise: "IoT integration, real-time data processing, cloud infrastructure",
+      name: "Aryan parvani",
+      role: "Web Developer",
+      expertise: "Frontend development, UI/UX design",
+      avatar: "💻"
+    },
+    {
+      name: "Arjun jani",
+      role: "AI Engineer",
+      expertise: "Machine learning, data science, AI model deployment",
+      avatar: "🤖"
+    },
+    {
+      name: "Tirth vyas",
+      role: "AI/Web Developer",
+      expertise: "Full-stack development, AI integration, cloud platforms",
       avatar: "👨‍💻"
-    },
-    {
-      name: "Dr. Priya Patel",
-      role: "Environmental Scientist",
-      expertise: "Coastal ecology, climate change impacts, marine biology",
-      avatar: "👩‍🔬"
-    },
-    {
-      name: "Alex Thompson",
-      role: "Product Manager",
-      expertise: "User experience, stakeholder engagement, product strategy",
-      avatar: "👨‍💼"
     }
   ];
 
@@ -298,43 +298,7 @@ const AboutPage = () => {
       </section>
 
       {/* Milestones Section */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-12 animate-fade-in">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-blue-800">
-              Our Journey
-            </h2>
-            <p className="text-lg text-cyan-800 max-w-2xl mx-auto">
-              Key milestones in our mission to protect coastal communities worldwide.
-            </p>
-          </div>
-          <div className="max-w-4xl mx-auto">
-            <div className="relative">
-              {/* Timeline line */}
-              <div className="absolute left-1/2 transform -translate-x-px h-full w-0.5 bg-blue-200"></div>
-              
-              {milestones.map((milestone, index) => (
-                <div key={index} className={`relative mb-8 ${index % 2 === 0 ? 'left-timeline' : 'right-timeline'}`}>
-                  <div className={`flex items-center ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`}>
-                    <div className={`w-1/2 ${index % 2 === 0 ? 'pr-8 text-right' : 'pl-8 text-left'}`}>
-                      <Card className="inline-block w-full max-w-xs">
-                        <CardContent>
-                          <div className="text-2xl font-bold text-blue-600 mb-2">{milestone.year}</div>
-                          <h3 className="text-lg font-semibold text-blue-700 mb-2">{milestone.title}</h3>
-                          <p className="text-sm text-cyan-700">{milestone.description}</p>
-                        </CardContent>
-                      </Card>
-                    </div>
-                    
-                    {/* Timeline dot */}
-                    <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-blue-600 rounded-full border-4 border-white shadow-lg"></div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+     
 
       {/* Call to Action Section */}
       <section className="py-16 bg-blue-600 text-white relative overflow-hidden">

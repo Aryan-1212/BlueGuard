@@ -28,6 +28,7 @@ import { useCrisisMonitoring } from "./hooks/useCrisisMonitoring";
 
 // Dashboard data and alert structures defined inline
 
+
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);

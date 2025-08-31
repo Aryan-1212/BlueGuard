@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <header className="bg-white shadow-sm border-b top-0 sticky z-50 mx-2 rounded-lg opacity-90">
+        <header className="bg-white shadow-sm border-b top-0 mx-2 rounded-lg opacity-90">
           <nav className="max-w-7xl mx-auto flex  justify-between items-center p-4">
             {/* Logo/Brand */}
             <div className="flex items-center">
